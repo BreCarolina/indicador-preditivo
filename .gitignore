@@ -1,0 +1,27 @@
+
+# Arquivo de ambiente
+.env
+
+# Arquivos de configuração locais
+*.local
+*.vscode/
+
+# Cache e logs
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+# Dados temporários
+*.csv
+*.json
+*.db
+
+# Arquivos do Jupyter/Colab
+.ipynb_checkpoints/
+*.ipynb
+
+# Sistema
+.DS_Store
+Thumbs.db
