@@ -3,3 +3,7 @@
 2025-09-08 11:07:31 UTC - Removendo 19 linhas incompletas.
 2025-09-08 11:07:31 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_transformed_20250908_110731.csv
 2025-09-08 11:07:31 UTC - Processamento completo.
+2025-09-08 11:44:26 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_candles.csv
+2025-09-08 11:44:26 UTC - Dados limpos salvos em /content/indicador-preditivo/data/cleaned/ETHUSD_cleaned_20250908_114426.csv
+2025-09-08 11:44:26 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_transformed_20250908_114426.csv
+2025-09-08 11:44:26 UTC - Processamento concluído com sucesso.
