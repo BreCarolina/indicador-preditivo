@@ -12,3 +12,9 @@
 2025-09-08 11:55:40 UTC - Scaler de normalização salvo em /content/indicador-preditivo/data/transformed/scaler_20250908_115540.joblib
 2025-09-08 11:55:40 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_transformed_20250908_115540.csv
 2025-09-08 11:55:40 UTC - Processamento concluído com sucesso.
+2025-09-08 12:15:02 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_candles.csv
+2025-09-08 12:15:02 UTC - Dados limpos salvos em /content/indicador-preditivo/data/cleaned/ETHUSD_cleaned_20250908_121502.csv
+2025-09-08 12:15:02 UTC - Removendo 19 linhas com NaNs (incompletas para indicadores).
+2025-09-08 12:15:02 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_transformed_20250908_121502.csv
+2025-09-08 12:15:02 UTC - Scaler de normalização salvo em /content/indicador-preditivo/data/transformed/scaler_20250908_121502.save
+2025-09-08 12:15:02 UTC - Processamento completo com sucesso.
