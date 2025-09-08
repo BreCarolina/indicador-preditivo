@@ -2,8 +2,8 @@
 # Indicador Preditivo de Opções Binárias
 
 ## Visão Geral
-Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, integrando dados de uma corretora.  
-O sistema consumirá dados históricos e em tempo real (via WebSocket), aplicará modelos de machine learning e deep learning, e gerará previsões sobre a direção do próximo candle.  
+Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, integrando dados de uma corretora.
+O sistema consumirá dados históricos e em tempo real (via WebSocket), aplicará modelos de machine learning e deep learning, e gerará previsões sobre a direção do próximo candle.
 Na fase final, será implementada **semi-automação** e posteriormente **automação total** das operações, incluindo gerenciamento de ganhos.
 
 ---
@@ -74,7 +74,7 @@ O backlog foi organizado em **6 sprints**, correspondendo aos milestones no GitH
    - Criar repositório e estrutura de pastas
    - Configurar ambiente Colab
    - Coletar dados históricos da corretora
-   - Pré-processar dados  
+   - Pré-processar dados
 
 2. **Sprint 2 – Baseline e Visualização**
    - Modelo baseline (Regressão Logística)
