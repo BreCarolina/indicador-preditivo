@@ -4,3 +4,6 @@
 2025-09-09 22:22:36 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_candles.csv
 2025-09-09 22:22:38 UTC - Dados limpos salvos em /content/indicador-preditivo/data/cleaned/ETHUSD_cleaned_v1_20250909_222237.csv
 2025-09-09 22:22:38 UTC - Processamento V1 concluído com sucesso.
+2025-09-09 22:31:29 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_candles.csv
+2025-09-09 22:31:31 UTC - Dados limpos salvos em /content/indicador-preditivo/data/cleaned/ETHUSD_cleaned_v1_20250909_223129.csv
+2025-09-09 22:31:31 UTC - Processamento V1 concluído com sucesso.
