@@ -1,10 +1,9 @@
-
 # Arquivo de ambiente
 .env
 
 # Arquivos de configuração locais
 *.local
-*.vscode/
+.vscode/
 
 # Cache e logs
 __pycache__/
@@ -17,6 +16,7 @@ __pycache__/
 *.csv
 *.json
 *.db
+data/transformed/
 
 # Arquivos do Jupyter/Colab
 .ipynb_checkpoints/
