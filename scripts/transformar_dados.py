@@ -17,7 +17,7 @@ Este script:
    - Variação do fechamento
    - RSI (14 períodos)
    - Volumes médios (5 e 20)
-   - Tendência futura (target supervisionado)
+   - Target contínuo: fechamento futuro (regressão)
    - Features temporais (hora, minuto, dia da semana)
    - Retorno percentual
    - Volatilidade (desvio padrão móvel)
@@ -30,7 +30,7 @@ Resultado: um CSV no diretório /data/transformed com todas as features prontas.
 ROOT = "/content/indicador-preditivo"
 PAR = "ETHUSD"
 TIMEFRAME = 300    # em segundos (M5 = 300, M1 = 60, M15 = 900)
-DIAS = 180
+DIAS = 30
 
 # Estrutura de diretórios
 RAW_DIR = os.path.join(ROOT, "data", "raw")       
@@ -134,9 +134,8 @@ df['RSI_14'] = 100 - (100 / (1 + rs))
 df['vol_media_5'] = df['volume'].rolling(5, min_periods=1).mean()
 df['vol_media_20'] = df['volume'].rolling(20, min_periods=1).mean()
 
-# Tendência futura (alvo supervisionado)
-df['tendencia_futura'] = df['fechamento'].shift(-1) - df['fechamento']
-df['tendencia_futura'] = df['tendencia_futura'].apply(lambda x: 1 if x > 0 else (-1 if x < 0 else 0))
+# Target contínuo (fechamento futuro)
+df['fechamento_futuro'] = df['fechamento'].shift(-1)
 
 # -----------------------------------
 # Features adicionais (temporais e estatísticas)
@@ -163,6 +162,9 @@ def calcular_volatilidade(df: pd.DataFrame) -> pd.DataFrame:
 df = adicionar_features_temporais(df)
 df = calcular_retorno(df)
 df = calcular_volatilidade(df)
+
+# Remover NaNs gerados por shift
+df = df.dropna().reset_index(drop=True)
 
 # -----------------------------------
 # Salvar resultado
