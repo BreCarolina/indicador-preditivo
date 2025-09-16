@@ -4,175 +4,95 @@ import os
 import pandas as pd
 from datetime import datetime, timezone
 
-"""
-Script de transformação de dados para o projeto Indicador Preditivo.
+def transformar_dados(raw_path, par="ETHUSD", timeframe=300, dias=30, root="/content/indicador-preditivo"):
+    """
+    Transforma dados brutos (candles) em dataset enriquecido com features.
+    
+    Args:
+        raw_path (str): Caminho do CSV bruto já salvo.
+        par (str): Ativo, ex: ETHUSD.
+        timeframe (int): Intervalo em segundos (M1=60, M5=300, ...).
+        dias (int): Número de dias usados no nome do arquivo final.
+        root (str): Caminho raiz do projeto.
 
-Este script:
-1. Lê os dados brutos (candles) já coletados.
-2. Organiza e valida colunas essenciais.
-3. Cria um conjunto de features técnicas e estatísticas:
-   - Pressão compradora/vendedora
-   - Médias móveis (SMA, EMA)
-   - Suportes, resistências e distâncias relativas
-   - Variação do fechamento
-   - RSI (14 períodos)
-   - Volumes médios (5 e 20)
-   - Target contínuo: fechamento futuro (regressão)
-   - Features temporais (hora, minuto, dia da semana)
-   - Retorno percentual
-   - Volatilidade (desvio padrão móvel)
-4. Salva o dataset transformado no diretório definido.
+    Returns:
+        str: Caminho do arquivo transformado salvo.
+    """
 
-Resultado: um CSV no diretório /data/transformed com todas as features prontas.
-"""
+    # Estrutura de diretórios
+    transformed_dir = os.path.join(root, "data", "transformed")
+    log_dir = os.path.join(root, "data", "logs")
+    os.makedirs(transformed_dir, exist_ok=True)
+    os.makedirs(log_dir, exist_ok=True)
 
-# Configurações principais
-ROOT = "/content/indicador-preditivo"
-PAR = "ETHUSD"
-TIMEFRAME = 300    # em segundos (M5 = 300, M1 = 60, M15 = 900)
-DIAS = 30
+    def log(msg):
+        ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
+        print(msg)
+        with open(os.path.join(log_dir, f"process_log_{datetime.now(timezone.utc).strftime('%Y%m%d')}.txt"), "a") as f:
+            f.write(f"{ts} - {msg}\n")
 
-# Estrutura de diretórios
-RAW_DIR = os.path.join(ROOT, "data", "raw")       
-CLEANED_DIR = os.path.join(ROOT, "data", "cleaned")   
-TRANSFORMED_DIR = os.path.join(ROOT, "data", "transformed") 
-LOG_DIR = os.path.join(ROOT, "data", "logs")
+    # Leitura do CSV bruto
+    if not os.path.exists(raw_path):
+        raise FileNotFoundError(f"Arquivo bruto não encontrado em {raw_path}")
 
-# Criação das pastas se não existirem
-os.makedirs(RAW_DIR, exist_ok=True)
-os.makedirs(CLEANED_DIR, exist_ok=True)
-os.makedirs(TRANSFORMED_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+    log(f"Lendo arquivo bruto: {raw_path}")
+    df = pd.read_csv(raw_path)
 
-# Nome do arquivo bruto esperado
-RAW_FILENAME = f"{PAR}_M{TIMEFRAME//60}_{DIAS}d.csv"  
-RAW_PATH = os.path.join(RAW_DIR, RAW_FILENAME)
-
-if not os.path.exists(RAW_PATH):
-    raise FileNotFoundError(f"Arquivo bruto não encontrado em {RAW_PATH}")
-
-def log(msg):
-    """Registra mensagem em log (console + arquivo)."""
-    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
-    print(msg)
-    with open(os.path.join(LOG_DIR, f"process_log_{datetime.now(timezone.utc).strftime('%Y%m%d')}.txt"), "a") as f:
-        f.write(f"{ts} - {msg}\n")
-
-# Períodos para médias móveis
-MA_PERIODS = [5, 10, 20, 50, 100, 200]  
-
-# Leitura do CSV bruto
-log(f"Lendo arquivo bruto: {RAW_PATH}")
-df = pd.read_csv(RAW_PATH)
-
-# Identificar coluna de tempo
-time_col = None
-for candidate in ["from", "datetime", "timestamp", "time"]:
-    if candidate in df.columns:
-        time_col = candidate
-        break
-
-if time_col is None:
-    for c in df.columns:
-        try:
-            pd.to_datetime(df[c].iloc[0])
-            time_col = c
+    # Garantir coluna de tempo
+    time_col = None
+    for candidate in ["from", "datetime", "timestamp", "time"]:
+        if candidate in df.columns:
+            time_col = candidate
             break
-        except Exception:
-            continue
+    if time_col is None:
+        raise RuntimeError("Nenhuma coluna de tempo encontrada no CSV.")
 
-if time_col is None:
-    raise RuntimeError("Não foi possível identificar coluna de tempo no CSV.")
+    df[time_col] = pd.to_datetime(df[time_col], utc=True, errors="coerce")
+    df = df.rename(columns={time_col: "timestamp"}).sort_values("timestamp").reset_index(drop=True)
 
-# Converter coluna de tempo para datetime UTC
-df[time_col] = pd.to_datetime(df[time_col], utc=True, errors="coerce")
-if df[time_col].isna().all():
-    df[time_col] = pd.to_datetime(df[time_col].astype(str), errors="coerce")
+    # Features
+    df["pressao_compradora"] = df["maxima"] - df["fechamento"]
+    df["pressao_vendedora"] = df["fechamento"] - df["minima"]
 
-# Validar colunas obrigatórias
-required = [time_col, "abertura", "maxima", "minima", "fechamento", "volume"]
-for r in required:
-    if r not in df.columns:
-        raise RuntimeError(f"Coluna obrigatória ausente: {r}")
+    for p in [5, 10, 20, 50, 100, 200]:
+        df[f"SMA_{p}"] = df["fechamento"].rolling(window=p, min_periods=1).mean()
+        df[f"EMA_{p}"] = df["fechamento"].ewm(span=p, adjust=False).mean()
 
-# Ordenar por tempo e padronizar nome
-df = df.sort_values(by=time_col).reset_index(drop=True)
-df = df.rename(columns={time_col: "timestamp"})
+    df["resistencia"] = df["maxima"].rolling(window=20, min_periods=1).max()
+    df["suporte"] = df["minima"].rolling(window=20, min_periods=1).min()
+    df["dist_resistencia"] = df["resistencia"] - df["fechamento"]
+    df["dist_suporte"] = df["fechamento"] - df["suporte"]
 
-# -----------------------------------
-# Features técnicas
-# -----------------------------------
+    df["var_fechamento"] = df["fechamento"].diff()
 
-# Pressões compradora e vendedora
-df["pressao_compradora"] = df["maxima"] - df["fechamento"]
-df["pressao_vendedora"] = df["fechamento"] - df["minima"]
+    delta = df["fechamento"].diff()
+    up = delta.clip(lower=0)
+    down = -1 * delta.clip(upper=0)
+    rs = up.rolling(14, min_periods=1).mean() / down.rolling(14, min_periods=1).mean()
+    df["RSI_14"] = 100 - (100 / (1 + rs))
 
-# Médias móveis simples e exponenciais
-for p in MA_PERIODS:
-    df[f"SMA_{p}"] = df["fechamento"].rolling(window=p, min_periods=1).mean()
-    df[f"EMA_{p}"] = df["fechamento"].ewm(span=p, adjust=False).mean()
+    df["vol_media_5"] = df["volume"].rolling(5, min_periods=1).mean()
+    df["vol_media_20"] = df["volume"].rolling(20, min_periods=1).mean()
 
-# Suporte, resistência e distâncias
-df['resistencia'] = df['maxima'].rolling(window=20, min_periods=1).max()
-df['suporte'] = df['minima'].rolling(window=20, min_periods=1).min()
-df['dist_resistencia'] = df['resistencia'] - df['fechamento']
-df['dist_suporte'] = df['fechamento'] - df['suporte']
+    df["fechamento_futuro"] = df["fechamento"].shift(-1)
 
-# Variação absoluta do fechamento
-df['var_fechamento'] = df['fechamento'].diff()
+    df["hora_num"] = df["timestamp"].dt.hour
+    df["minuto"] = df["timestamp"].dt.minute
+    df["dia_semana"] = df["timestamp"].dt.dayofweek
+    df["retorno"] = df["fechamento"].pct_change().fillna(0)
+    df["volatilidade"] = df["retorno"].rolling(window=10, min_periods=1).std().fillna(0)
 
-# RSI (14 períodos)
-delta = df['fechamento'].diff()
-up = delta.clip(lower=0)
-down = -1 * delta.clip(upper=0)
-roll_up = up.rolling(14, min_periods=1).mean()
-roll_down = down.rolling(14, min_periods=1).mean()
-rs = roll_up / roll_down
-df['RSI_14'] = 100 - (100 / (1 + rs))
+    # Salvar
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    transformed_fname = f"{par}_M{timeframe//60}_{dias}d_transformed_{ts}.csv"
+    transformed_path = os.path.join(transformed_dir, transformed_fname)
+    df.to_csv(transformed_path, index=False)
 
-# Volumes médios
-df['vol_media_5'] = df['volume'].rolling(5, min_periods=1).mean()
-df['vol_media_20'] = df['volume'].rolling(20, min_periods=1).mean()
+    log(f"Dados transformados salvos em {transformed_path}")
+    return transformed_path
 
-# Target contínuo (fechamento futuro)
-df['fechamento_futuro'] = df['fechamento'].shift(-1)
 
-# -----------------------------------
-# Features adicionais (temporais e estatísticas)
-# -----------------------------------
-
-def adicionar_features_temporais(df: pd.DataFrame) -> pd.DataFrame:
-    """Adiciona hora, minuto e dia da semana."""
-    df['hora_num'] = df['timestamp'].dt.hour
-    df['minuto'] = df['timestamp'].dt.minute
-    df['dia_semana'] = df['timestamp'].dt.dayofweek
-    return df
-
-def calcular_retorno(df: pd.DataFrame) -> pd.DataFrame:
-    """Adiciona coluna de retorno percentual entre candles consecutivos."""
-    df['retorno'] = df['fechamento'].pct_change().fillna(0)
-    return df
-
-def calcular_volatilidade(df: pd.DataFrame) -> pd.DataFrame:
-    """Adiciona volatilidade como desvio padrão móvel do retorno (janela=10)."""
-    df['volatilidade'] = df['retorno'].rolling(window=10, min_periods=1).std().fillna(0)
-    return df
-
-# Aplicar funções de novas features
-df = adicionar_features_temporais(df)
-df = calcular_retorno(df)
-df = calcular_volatilidade(df)
-
-# Remover NaNs gerados por shift
-df = df.dropna().reset_index(drop=True)
-
-# -----------------------------------
-# Salvar resultado
-# -----------------------------------
-ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-transformed_fname = f"{PAR}_M{TIMEFRAME//60}_{DIAS}d_transformed_{ts}.csv"
-transformed_path = os.path.join(TRANSFORMED_DIR, transformed_fname)
-df.to_csv(transformed_path, index=False)
-
-log(f"Dados transformados salvos em {transformed_path}")
-log("Transformação concluída com sucesso.")
+if __name__ == "__main__":
+    # Exemplo de uso direto
+    raw_path = "/content/indicador-preditivo/data/raw/ETHUSD_M5_30d.csv"
+    transformar_dados(raw_path)
