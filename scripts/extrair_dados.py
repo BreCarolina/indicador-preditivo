@@ -24,12 +24,19 @@ O timeframe é o intervalo em segundos:
 900 → 15 minutos (M15)
 1800 → 30 minutos (M30)
 3600 → 1 hora (H1)
+
+M1 (1 minuto) → 60 candles por hora × 24 horas = 1440 candles por dia.
+M5 (5 minutos) → 12 candles por hora × 24 horas = 288 candles por dia.
+M15 (15 minutos) → 4 candles por hora × 24 horas = 96 candles por dia.
+M30 (30 minutos) → 2 candles por hora × 24 horas = 48 candles por dia.
+H1 (1 hora) → 1 candle por hora × 24 horas = 24 candles por dia.
+
 """
 
 # Configurações principais
 PAR = "ETHUSD"     # Ativo
 TIMEFRAME = 300    # em segundos (M5 = 300, M1 = 60, M15 = 900)
-DIAS = 180         # Quantos dias de histórico coletar
+DIAS = 30         # Quantos dias de histórico coletar
 
 # Converte DIAS + TIMEFRAME em quantidade de candles
 candles_por_dia = int((24 * 60) / (TIMEFRAME / 60))
