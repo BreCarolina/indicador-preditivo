@@ -42,7 +42,7 @@ parametros = {
     "paciencia": 10,
     "epocas_maximas": 100,
     "tamanho_lote": 128,
-    "funcao_perda": "Huber",       # manter Huber (robusta a outliers)
+    "funcao_perda": "Huber",      # (robusta a outliers)
 }
 
 # ==================== LOAD DATA ==================== #
