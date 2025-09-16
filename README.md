@@ -1,107 +1,98 @@
+#@title README.md
 
 # Indicador Preditivo de Opções Binárias
 
 ## Visão Geral
-Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, integrando dados de uma corretora.
-O sistema consumirá dados históricos e em tempo real (via WebSocket), aplicará modelos de machine learning e deep learning, e gerará previsões sobre a direção do próximo candle.
-Na fase final, será implementada **semi-automação** e posteriormente **automação total** das operações, incluindo gerenciamento de ganhos.
+Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, utilizando dados históricos e em tempo real da corretora (via WebSocket).  
+O sistema implementa um pipeline completo de **coleta, transformação, preparação e modelagem sequencial com LSTM**, para prever o fechamento futuro dos candles (regressão).  
 
----
+Na fase final, será implementada **semi-automação** e, posteriormente, **automação total** das operações, incluindo gerenciamento de ganhos.
+
 
 ## Objetivos do Projeto
-- Coletar e processar dados históricos de candles da corretora.
-- Criar modelos baseline e evoluir para redes neurais (LSTM).
-- Implementar simulações automáticas com métricas de performance.
-- Desenvolver visualizações interativas em tempo real.
-- Integrar execução semi-automática de ordens.
-- Implementar automação total com split de ganhos e relatórios completos.
+- Coletar e armazenar candles históricos da corretora.
+- Transformar dados brutos em features técnicas e estatísticas.
+- Preparar sequências temporais normalizadas/padronizadas para LSTM.
+- Treinar, avaliar e versionar modelos preditivos.
+- Registrar métricas (MAE, RMSE, R²) em relatórios de modelos.
+- Desenvolver visualizações de comparações previsão vs. real.
+- Evoluir para semi-automação e automação total das operações.
 
----
 
 ## Estrutura do Repositório
-```
 
 indicador-preditivo/
 │
-├── data/                     # Histórico de candles e logs
-│   ├── raw/                  # Dados crus
-│   ├── cleaned/
-│   │    └── transformed      # Dados pré-processados
+├── data/
+│   ├── raw/                  # Dados crus (candles coletados)
+│   ├── cleaned/              # Dados limpos
+│   ├── transformed/          # Dados transformados com features
+│   ├── prepared/             # Dados preparados em sequências para LSTM
 │   └── logs/                 # Logs de execução
 │
-├── models/                   # Modelos preditivos treinados
-│   ├── regressao.pkl
-│   └── rede\_neural.pkl
+├── models/                   # Modelos e relatórios
+│   ├── modelo\_LSTM\_seq\*.keras
+│   ├── y\_scaler\_\*.pkl
+│   └── relatorio\_modelos.csv
 │
-├── scripts/                  # Scripts auxiliares
-│   ├── preprocess.py         # Pré-processamento de dados
-│   ├── train\_model.py        # Treino do modelo
-│   ├── backtest.py           # Backtesting do modelo
-│   └── utils.py              # Funções genéricas
+├── scripts/                  # Scripts principais do pipeline
+│   ├── coletar\_dados.py
+│   ├── transformar\_dados.py
+│   ├── preparar\_dados\_LSTM.py
+│   └── treinar\_modelo\_LSTM.py
 │
-├── realtime/                 # Parte em tempo real
-│   ├── websocket\_client.py   # Conexão com a corretora (WebSocket)
-│   ├── predictor.py          # Carrega modelo e gera previsões
-│   ├── signal\_manager.py     # Lógica de CALL/PUT baseada nas previsões
-│   └── order\_executor.py     # Executa ordens na corretora
+├── realtime/                 # Integração em tempo real (futuro)
+│   ├── websocket\_client.py
+│   ├── predictor.py
+│   ├── signal\_manager.py
+│   └── order\_executor.py
 │
-├── dashboard/                # Visualização dos sinais
-│   └── app.py                # Dashboard (Plotly/Dash ou Streamlit)
+├── dashboard/                # Visualização dos sinais e métricas
+│   └── app.py
 │
-├── config/                   # Configurações
-│   └── settings.yaml         # Credenciais, parâmetros do modelo, ativos
+├── config/                   # Configurações e credenciais
+│   └── settings.yaml
 │
 ├── sprints/                  # Notebooks organizados por sprint
-│   ├── sprint1\_notebooks/
-│   ├── sprint2\_notebooks/
-│   ├── sprint3\_notebooks/
-│   ├── sprint4\_notebooks/
-│   ├── sprint5\_notebooks/
-│   └── sprint6\_notebooks/
 │
-├── main.py                   # Arquivo principal: orquestra tudo
-├── backlog.csv               # Backlog do projeto (issues e milestones)
+├── main.py                   # Arquivo principal (orquestração)
+├── backlog.csv               # Backlog do projeto
 └── requirements.txt          # Dependências do projeto
-
-```
 
 ---
 
 ## Sprints e Milestones
-O backlog foi organizado em **6 sprints**, correspondendo aos milestones no GitHub:
+O projeto está organizado em **6 sprints**:
 
 1. **Sprint 1 – Setup Inicial e Dados Históricos**
-   - Criar repositório e estrutura de pastas
-   - Configurar ambiente Colab
-   - Coletar dados históricos da corretora
-   - Pré-processar dados
+   - Estruturação do repositório
+   - Coleta de candles
+   - Pré-processamento inicial
 
-2. **Sprint 2 – Baseline e Visualização**
-   - Modelo baseline (Regressão Logística)
-   - Visualização mínima de candles e previsão
-   - Implementação de logs de simulação
+2. **Sprint 2 – Transformação e Features**
+   - Criação de features técnicas/estatísticas
+   - Validação de consistência
+   - Logs estruturados
 
-3. **Sprint 3 – WebSocket e Modelo Robusto**
-   - Integração WebSocket com a corretora
-   - Treinar modelo XGBoost
-   - Simulação semi-automática de ordens
-   - Visualização interativa em tempo real
+3. **Sprint 3 – Preparação de Dados**
+   - Normalização/padronização por sequência
+   - Divisão treino/teste temporal
+   - Criação da pasta `prepared/`
 
-4. **Sprint 4 – Rede Neural LSTM**
-   - Preparar dados sequenciais para LSTM
-   - Treinar e avaliar LSTM
-   - Testar LSTM em simulação e comparar com XGBoost
+4. **Sprint 4 – Modelo LSTM**
+   - Prototipagem e treinamento da LSTM
+   - Ajustes de hiperparâmetros
+   - Salvamento de modelos e `y_scaler`
 
-5. **Sprint 5 – Semi-Automação e Painel**
-   - Implementar semi-automação de ordens
-   - Criar painel de métricas em tempo real
-   - Gerar relatórios básicos diários
+5. **Sprint 5 – Semi-Automação e Dashboard**
+   - Painel em tempo real
+   - Integração de sinais com corretora
+   - Relatórios de simulação
 
-6. **Sprint 6 – Automação Total e Versão Final**
-   - Automação total de ordens
-   - Implementar split de ganhos (MetaMask)
-   - Gerar relatórios completos (diário, semanal, mensal)
-   - Funcionalidades extras: backtesting, alertas, painel de saúde do modelo
+6. **Sprint 6 – Automação Total**
+   - Execução automática de ordens
+   - Split de ganhos (MetaMask)
+   - Relatórios completos (diário, semanal, mensal)
 
 ---
 
@@ -109,42 +100,44 @@ O backlog foi organizado em **6 sprints**, correspondendo aos milestones no GitH
 - Python 3.10+
 - Pandas, NumPy (manipulação de dados)
 - Matplotlib, Plotly (visualização)
-- Scikit-learn, XGBoost, TensorFlow/Keras (modelagem)
-- WebSocket (corretora) para dados em tempo real
-- GitHub Projects para gerenciamento do backlog
+- Scikit-learn, TensorFlow/Keras (modelagem)
+- WebSocket (dados em tempo real)
+- GitHub Projects (gerenciamento de backlog)
 
 ---
 
 ## Roadmap
-- [x] Setup inicial do repositório e criação de milestones
-- [x] Configuração de ambiente
-- [ ] Coleta e pré-processamento de dados históricos
-- [ ] Desenvolvimento de modelo baseline
-- [ ] Integração com WebSocket e modelo XGBoost
-- [ ] Implementação de simulação semi-automática
-- [ ] Treinamento de LSTM e comparação de modelos
-- [ ] Desenvolvimento de painel de métricas
-- [ ] Automação total de ordens e split de ganhos
-- [ ] Relatórios completos e funcionalidades extras
+- [x] Setup inicial do repositório
+- [x] Coleta de dados brutos
+- [x] Transformação e criação de features
+- [x] Preparação de sequências para LSTM
+- [x] Treinamento inicial de LSTM
+- [ ] Ajustes avançados de hiperparâmetros
+- [ ] Desenvolvimento de dashboard
+- [ ] Integração com corretora em tempo real
+- [ ] Semi-automação de ordens
+- [ ] Automação total com relatórios
 
 ---
 
 ## Variáveis de Ambiente
-O projeto utiliza um arquivo `.env` (não versionado) contendo:
-```
+O projeto utiliza um arquivo `.env` (não versionado) com credenciais da corretora e do GitHub.
 
-GITHUB\_OWNER=\<usuário ou organização>
-REPO=\<nome-do-repositório>
-GITHUB\_TOKEN=\<token-com-permissões>
+Exemplo:
 
-```
+IQ\_EMAIL=<email>
+IQ\_PASSWORD=<senha>
+GITHUB\_OWNER=\<usuário>
+REPO=<nome-repo>
+GITHUB\_TOKEN=<token>
 
 ---
 
 ## Contribuição
-Pull requests são bem-vindos. Para grandes alterações, abra uma issue antes para discussão.
+Pull requests são bem-vindos. Abra uma issue para discussão antes de mudanças grandes.
 
 ---
 
 ## Licença
-Este projeto é privado durante desenvolvimento. Licenciamento público será definido após versão estável.
+Projeto privado durante desenvolvimento. Licenciamento público será definido na versão estável.
+
