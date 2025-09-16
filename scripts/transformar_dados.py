@@ -51,7 +51,7 @@ from datetime import datetime, timezone
 def transformar_dados(raw_path, par="ETHUSD", timeframe=300, dias=30, root="/content/indicador-preditivo"):
     """
     Transforma dados brutos (candles) em dataset enriquecido com features.
-    
+
     Args:
         raw_path (str): Caminho do CSV bruto já salvo.
         par (str): Ativo, ex: ETHUSD.

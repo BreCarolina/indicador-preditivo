@@ -3,8 +3,8 @@
 # Indicador Preditivo de Opções Binárias
 
 ## Visão Geral
-Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, utilizando dados históricos e em tempo real da corretora (via WebSocket).  
-O sistema implementa um pipeline completo de **coleta, transformação, preparação e modelagem sequencial com LSTM**, para prever o fechamento futuro dos candles (regressão).  
+Este projeto tem como objetivo construir um **indicador preditivo para o mercado financeiro de opções binárias**, utilizando dados históricos e em tempo real da corretora (via WebSocket).
+O sistema implementa um pipeline completo de **coleta, transformação, preparação e modelagem sequencial com LSTM**, para prever o fechamento futuro dos candles (regressão).
 
 Na fase final, será implementada **semi-automação** e, posteriormente, **automação total** das operações, incluindo gerenciamento de ganhos.
 
