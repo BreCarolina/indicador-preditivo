@@ -1,4 +1,4 @@
-#@title Script para extração de dados IQ OPTION✅
+#@title Script para extração de dados IQ OPTION ✅
 
 import os
 import time
@@ -86,6 +86,7 @@ def buscar_candles(api, par=PAR, timeframe=TIMEFRAME, total_candles=TOTAL_CANDLE
 def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root="/content/indicador-preditivo"):
     """
     Extrai dados da IQ Option ou usa cache já salvo em /data/raw.
+    Retorna o caminho do arquivo CSV final.
     """
     raw_dir = os.path.join(root, "data", "raw")
     os.makedirs(raw_dir, exist_ok=True)
@@ -95,12 +96,12 @@ def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root="/content/indica
     atualizar = True
     if os.path.exists(caminho_csv):
         df = pd.read_csv(caminho_csv, parse_dates=["from"])
-        ultimo = df["from"].max().tz_localize("UTC") if df["from"].dt.tz is None else df["from"].max()
+        ultimo = df["from"].max()
+        if ultimo.tzinfo is None:
+            ultimo = ultimo.tz_localize("UTC")
         if datetime.now(timezone.utc) - ultimo < timedelta(minutes=timeframe // 60):
             print("Usando dados já salvos.")
             atualizar = False
-    else:
-        df = pd.DataFrame()
 
     if atualizar:
         print(f"Baixando {dias} dias de dados ({TOTAL_CANDLES} candles em M{timeframe//60})...")
@@ -109,13 +110,14 @@ def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root="/content/indica
         df.to_csv(caminho_csv, index=False)
         print(f"Dados salvos em {caminho_csv}.")
 
-    return df, caminho_csv
+    return caminho_csv
 
 
 # -----------------------------
 # Execução direta
 # -----------------------------
 if __name__ == "__main__":
-    dados, path = extrair_dados(PAR, TIMEFRAME, DIAS)
+    path = extrair_dados(PAR, TIMEFRAME, DIAS)
+    df = pd.read_csv(path, parse_dates=["from"])
     print("\nÚltimos 5 candles:")
-    print(dados.tail())
+    print(df.tail())
