@@ -16,7 +16,7 @@ __pycache__/
 *.csv
 *.json
 *.db
-data/transformed/
+data/prepared/
 
 # Arquivos do Jupyter/Colab
 .ipynb_checkpoints/
