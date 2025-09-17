@@ -1,3 +1,4 @@
+#@title Script preparar_dados_LSTM.py (v2) ✅
 
 """
 Script: preparar_dados_LSTM.py
@@ -13,6 +14,7 @@ import os
 import glob
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from datetime import datetime, timezone
 from sklearn.preprocessing import StandardScaler
 
@@ -142,7 +144,9 @@ def preparar_dados(transformed_path=None, seq_len=300, test_size=0.15, root="/co
         "y_train": f"y_train_{ts}.npy",
         "X_test": f"X_test_{ts}.npy",
         "y_test": f"y_test_{ts}.npy",
-        "y_scaler": f"y_scaler_{ts}.npz"
+        "y_scaler": f"y_scaler_{ts}.npz",
+        "y_train_raw": y_train_raw,
+        "y_test_raw": y_test_raw
     }
 
 
@@ -173,7 +177,29 @@ def inspecionar_datasets(prepared_dir, arquivos):
     print(f"Scaler -> mean={float(s['mean'])}, scale={float(s['scale'])}")
 
 
+# Bloco extra: visualização do target (bruto e comparativo)
+def analisar_target(y_train_raw, y_test_raw):    
+    plt.figure(figsize=(12, 5))
+    plt.plot(y_train_raw, label="Treino (raw)", alpha=0.7)
+    plt.plot(range(len(y_train_raw), len(y_train_raw) + len(y_test_raw)), y_test_raw, label="Teste (raw)", alpha=0.7)
+    plt.title("Evolução temporal do target (fechamento futuro)")
+    plt.xlabel("Índice")
+    plt.ylabel("Preço (raw)")
+    plt.legend()
+    plt.show()
+
+    plt.figure(figsize=(9, 3))
+    plt.hist(y_train_raw, bins=50, alpha=0.6, label="Treino")
+    plt.hist(y_test_raw, bins=50, alpha=0.6, label="Teste")
+    plt.title("Distribuição do target (raw)")
+    plt.xlabel("Preço")
+    plt.ylabel("Frequência")
+    plt.legend()
+    plt.show()
+
+
 if __name__ == "__main__":
     arquivos = preparar_dados()
     prepared_dir = "/content/indicador-preditivo/data/prepared"
     inspecionar_datasets(prepared_dir, arquivos)
+    analisar_target(arquivos["y_train_raw"], arquivos["y_test_raw"])
