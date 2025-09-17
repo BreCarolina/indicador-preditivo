@@ -1,4 +1,12 @@
 #@title Script de Extração de dados IqOption✅ (v2)
+
+import os
+import time
+import pandas as pd
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+import sys
+
 """
 Script: extrair_dados.py (v2)
 
@@ -22,7 +30,7 @@ Parâmetros configuráveis:
 PAR        -> Ativo a ser extraído (ex: "ETHUSD").
 TIMEFRAME  -> Timeframe em segundos (ex: 300 = 5 minutos).
 DIAS       -> Quantidade de dias históricos a coletar.
-ROOT_DIR   -> Diretório raiz do projeto.
+ROOT   -> Diretório raiz do projeto.
 
 Saídas:
 --------
@@ -30,12 +38,8 @@ Saídas:
 - Arquivo CSV salvo em: {ROOT_DIR}/data/raw/{PAR}_M{TIMEFRAME//60}_{DIAS}d.csv
 """
 
-import os
-import time
-import pandas as pd
-from datetime import datetime, timezone
-from dotenv import load_dotenv
-import sys
+
+#--------------------Configurações-------------------------#
 
 # Carrega credenciais do arquivo .env
 load_dotenv("/content/drive/MyDrive/Projetos/indicador-preditivo/.env")
@@ -49,13 +53,14 @@ from stable_api import IQ_Option
 # Parâmetros padrão
 PAR = "ETHUSD"
 TIMEFRAME = 300   # 5 minutos
-DIAS = 90
-ROOT_DIR = "/content/indicador-preditivo"
+DIAS = 120
+ROOT = "/content/indicador-preditivo"
+
+
 
 # Cálculo de quantos candles coletar
 candles_por_dia = int((24 * 60) / (TIMEFRAME / 60))
 TOTAL_CANDLES = DIAS * candles_por_dia
-
 
 def conectar_api():
     # Conecta à IQ Option usando credenciais
@@ -116,7 +121,7 @@ def buscar_candles(api, par=PAR, timeframe=TIMEFRAME, total_candles=TOTAL_CANDLE
     return df
 
 
-def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root=ROOT_DIR):
+def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root=ROOT):
     # Define diretório e nome do CSV
     raw_dir = os.path.join(root, "data", "raw")
     os.makedirs(raw_dir, exist_ok=True)
@@ -141,6 +146,6 @@ def extrair_dados(par=PAR, timeframe=TIMEFRAME, dias=DIAS, root=ROOT_DIR):
 
 
 if __name__ == "__main__":
-    dados, path = extrair_dados(PAR, TIMEFRAME, DIAS, ROOT_DIR)
+    dados, path = extrair_dados(PAR, TIMEFRAME, DIAS, ROOT)
     print(dados.tail())
     print(dados.head())
