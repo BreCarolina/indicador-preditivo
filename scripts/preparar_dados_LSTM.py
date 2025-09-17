@@ -16,6 +16,7 @@ import pandas as pd
 from datetime import datetime, timezone
 from sklearn.preprocessing import StandardScaler
 
+
 # Carrega o CSV transformado mais recente ou o caminho informado
 def carregar_csv(transformed_path, transformed_dir):    
     if transformed_path is None:
@@ -36,7 +37,7 @@ def carregar_csv(transformed_path, transformed_dir):
 
 # Normaliza ou padroniza cada feature dentro de uma sequência
 def normalizar_seq(seq_array, features, features_norm, features_std):
-        seq_norm = seq_array.copy()
+    seq_norm = seq_array.copy()
     for idx, col in enumerate(features):
         col_vals = seq_array[:, idx]
 
@@ -52,6 +53,7 @@ def normalizar_seq(seq_array, features, features_norm, features_std):
             seq_norm[:, idx] = scaler.fit_transform(col_vals.reshape(-1, 1)).flatten()
 
     return seq_norm
+
 
 # Cria janelas deslizantes (X) e o target correspondente (y)
 def criar_sequencias(df, seq_len, features, features_norm, features_std, target):    
