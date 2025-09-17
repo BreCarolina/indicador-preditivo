@@ -7,41 +7,6 @@ Descrição:
 Este script lê os dados brutos de candles (extraídos pelo `extrair_dados.py`),
 enriquece com features técnicas e estatísticas, e salva um novo CSV transformado
 para uso em treinamento de modelos preditivos.
-
-Fluxo de execução:
--------------------
-1. Lê o CSV bruto gerado pelo extrair_dados.py.
-2. Padroniza a coluna de tempo como `timestamp` e organiza em ordem cronológica.
-3. Cria features derivadas:
-   - Pressão compradora/vendedora
-   - Médias móveis simples (SMA) e exponenciais (EMA)
-   - Suporte, resistência e distâncias
-   - Variação de fechamento
-   - Indicador RSI (14 períodos)
-   - Médias móveis de volume
-   - Fechamento futuro (shift -1)
-   - Features de tempo (hora, minuto, dia da semana)
-   - Retorno percentual e volatilidade
-4. Salva dataset transformado em `/data/transformed/` com timestamp no nome.
-5. Registra logs em `/data/logs/`.
-
-Parâmetros configuráveis:
---------------------------
-raw_path   -> Caminho do CSV bruto já salvo (obrigatório).
-par        -> Ativo, ex: "ETHUSD".
-timeframe  -> Intervalo em segundos (M1=60, M5=300, ...).
-dias       -> Número de dias de histórico usado no nome do arquivo final.
-root       -> Caminho raiz do projeto.
-
-Saídas:
---------
-- Arquivo CSV salvo em: {root}/data/transformed/{par}_M{timeframe//60}_{dias}d_transformed_{timestamp}.csv
-- Caminho do arquivo transformado retornado pela função.
-
-Integração:
-------------
-Este script pode ser importado em outros módulos (como main.py) e usado via a função
-`transformar_dados()`, que retorna o caminho do CSV transformado.
 """
 
 import os
@@ -49,20 +14,6 @@ import pandas as pd
 from datetime import datetime, timezone
 
 def transformar_dados(raw_path, par="ETHUSD", timeframe=300, dias=30, root="/content/indicador-preditivo"):
-    """
-    Transforma dados brutos (candles) em dataset enriquecido com features.
-
-    Args:
-        raw_path (str): Caminho do CSV bruto já salvo.
-        par (str): Ativo, ex: ETHUSD.
-        timeframe (int): Intervalo em segundos (M1=60, M5=300, ...).
-        dias (int): Número de dias usados no nome do arquivo final.
-        root (str): Caminho raiz do projeto.
-
-    Returns:
-        str: Caminho do arquivo transformado salvo.
-    """
-
     # Estrutura de diretórios
     transformed_dir = os.path.join(root, "data", "transformed")
     log_dir = os.path.join(root, "data", "logs")
@@ -140,6 +91,10 @@ def transformar_dados(raw_path, par="ETHUSD", timeframe=300, dias=30, root="/con
 
 
 if __name__ == "__main__":
-    # Exemplo de uso direto
-    raw_path = "/content/indicador-preditivo/data/raw/ETHUSD_M5_30d.csv"
-    transformar_dados(raw_path)
+    par = "ETHUSD"
+    timeframe = 300   # M5
+    dias = 60
+    root = "/content/indicador-preditivo"
+
+    raw_path = os.path.join(root, "data", "raw", f"{par}_M{timeframe//60}_{dias}d.csv")
+    transformar_dados(raw_path, par=par, timeframe=timeframe, dias=dias, root=root)
