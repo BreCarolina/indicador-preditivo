@@ -93,7 +93,7 @@ def transformar_dados(raw_path, par="ETHUSD", timeframe=300, dias=30, root="/con
 if __name__ == "__main__":
     par = "ETHUSD"
     timeframe = 300   # M5
-    dias = 60
+    dias = 90
     root = "/content/indicador-preditivo"
 
     raw_path = os.path.join(root, "data", "raw", f"{par}_M{timeframe//60}_{dias}d.csv")
