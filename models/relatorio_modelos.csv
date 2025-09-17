@@ -1,0 +1,2 @@
+timestamp,versao_modelo,versao_dados,parametros,loss,mae,rmse,r2,mae_perc,rmse_perc,metricas_escala
+2025-09-17 14:48:57,LSTM_seq300,20250917_130346,"{'SEQ_LEN': 300, 'features': 32, 'unidades_lstm_camada1': 256, 'unidades_lstm_camada2': 128, 'unidades_dense': 64, 'taxa_dropout': 0.3, 'taxa_aprendizado': 0.002, 'funcao_perda': 'Huber', 'paciencia': 6, 'epocas_maximas': 100, 'tamanho_lote': 64}",0.014015601016581059,210.69140625,274.77387009593906,-3.3796396255493164,4.625829696655273,5.984751224517822,original

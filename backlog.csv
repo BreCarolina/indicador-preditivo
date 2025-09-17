@@ -1,0 +1,69 @@
+Title,Body,Labels,Milestone
+Criar repositório GitHub,"Subtarefas: criar repositório privado, estruturar pastas, configurar .gitignore
+
+DoD: Repositório criado
+Critérios: README com objetivos e estrutura",infra,1
+Configurar ambiente Colab,"Subtarefas: conectar Colab, instalar dependências, testar sync
+
+DoD: Ambiente pronto
+Critérios: Notebook de teste roda",infra,1
+Coletar dados históricos Avalon,"Subtarefas: investigar API, baixar 30 dias de candles, salvar CSV
+
+DoD: Histórico salvo
+Critérios: CSV válido",data,1
+Pré-processamento de dados,"Subtarefas: padronizar timestamps, limpar nulos, normalizar, salvar dataset
+
+DoD: Dataset pronto
+Critérios: Dataset sem gaps",data,1
+Modelo baseline (Regressão Logística),"Input: últimas 12h de candles
+Output: direção próximo candle
+DoD: Modelo gera previsões
+Critérios: Notebook roda com métricas",model,2
+Visualização mínima,"Subtarefas: plotar candles + previsão
+DoD: Usuário vê candles + previsão
+Critérios: Gráfico exibe 50 candles",frontend,2
+Logs e simulação manual,"Subtarefas: logar previsão/resultado
+DoD: Logs registrados
+Critérios: Log contém timestamp, previsão e resultado real",infra,2
+Integrar WebSocket Avalon,"Subtarefas: conectar endpoint, registrar candles
+DoD: Fluxo online funcionando
+Critérios: Terminal imprime candles novos",infra,3
+Modelo robusto (XGBoost),"Subtarefas: adaptar pipeline, treinar, comparar
+DoD: XGBoost com melhor performance
+Critérios: Acurácia +5% vs baseline",model,3
+Simulação semi-automática,"Subtarefas: simulador automático com logs
+DoD: Operações simuladas em log
+Critérios: Log mostra WIN/LOSS automático",infra,3
+Visualização interativa,"Subtarefas: gráfico em tempo real, destacar previsões corretas/incorretas
+DoD: Gráfico dinâmico
+Critérios: Atualizações em tempo real",frontend,3
+Preparar dados sequenciais,"Subtarefas: criar janelas temporais, normalizar sequências
+DoD: Dataset pronto
+Critérios: Matrizes (X,y) corretas",data,4
+Implementar e treinar LSTM,"Subtarefas: definir arquitetura, treinar, avaliar
+DoD: LSTM treinado
+Critérios: Modelo salvo em /models/lstm.h5",model,4
+Testar LSTM em simulação,"Subtarefas: integrar ao simulador, comparar com XGBoost
+DoD: Logs gerados
+Critérios: Comparativo disponível",model,4
+Semi-automação de ordens,"Subtarefas: conectar API, enviar ordens com confirmação manual
+DoD: Semi-automático funcional
+Critérios: Ordem confirmada aparece na corretora",infra,5
+Painel de métricas,"Subtarefas: criar dashboard simples, exibir acurácia, %WIN, ROI, perdas
+DoD: Painel funcional
+Critérios: Dashboard em tempo real",frontend,5
+Relatórios básicos,"Subtarefas: exportar PDF/CSV diário com resumo
+DoD: Relatório gerado
+Critérios: Arquivo salvo em /reports",infra,5
+Automação total,"Subtarefas: enviar ordens automáticas, logar tudo
+DoD: Sistema opera 100% sozinho
+Critérios: Ordens executadas na corretora",infra,6
+Split de ganhos,"Subtarefas: integrar MetaMask, split 5% dev / 5% user / resto corretora
+DoD: Split funcional
+Critérios: Transações blockchain registradas",infra,6
+Relatórios completos,"Subtarefas: gerar relatórios diário, semanal, mensal com métricas completas
+DoD: Relatórios detalhados
+Critérios: Arquivos disponíveis em /reports",infra,6
+Funcionalidades extras,"Subtarefas: backtesting, alertas, painel saúde modelo
+DoD: Funcionalidades extras rodando
+Critérios: Ferramentas em ambiente de teste",infra,6

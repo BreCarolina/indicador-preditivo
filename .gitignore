@@ -13,7 +13,6 @@ __pycache__/
 *.log
 
 # Dados temporários
-*.csv
 *.json
 *.db
 data/prepared/
