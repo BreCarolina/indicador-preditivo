@@ -1,2 +1,4 @@
 2025-09-17 00:50:00 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_M5_30d.csv
 2025-09-17 00:50:01 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_M5_30d_transformed_20250917_005001.csv
+2025-09-17 03:55:50 UTC - Lendo arquivo bruto: /content/indicador-preditivo/data/raw/ETHUSD_M5_30d.csv
+2025-09-17 03:55:50 UTC - Dados transformados salvos em /content/indicador-preditivo/data/transformed/ETHUSD_M5_30d_transformed_20250917_035550.csv
